@@ -73,9 +73,9 @@ kernel2 (dtype *input, dtype *output, unsigned int n)
     }
     __syncthreads ();
     //change 79-81
-    for(unsigned int s = 1; s < blockDim.x; s = s << 1) {
-    if(threadIdx.x *2*s<blockDim.x) {
-    scratch[threadIdx.x*2*s] += scratch[threadIdx.x * 2*s + s];
+    for(unsigned int s = n/2; s >=1; s = s >> 1) {
+    if(threadIdx.x <s) {
+    scratch[threadIdx.x] += scratch[threadIdx.x*2+1];
     }
     __syncthreads ();
     }
