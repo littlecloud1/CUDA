@@ -88,9 +88,12 @@ kernel5(dtype *g_idata, dtype *g_odata, unsigned int n)
     __syncthreads ();
     }
     if (threadIdx.x < 32) {
-
-    scratch[threadIdx.x] += scratch[threadIdx.x + 32];
-    scratch[threadIdx.x] += scratch[threadIdx.x + 16];
+    if (n > 64) {
+        scratch[threadIdx.x] += scratch[threadIdx.x + 32];
+    }
+    if (n > 32) {
+        scratch[threadIdx.x] += scratch[threadIdx.x + 16];
+    }
     scratch[threadIdx.x] += scratch[threadIdx.x+8];
     scratch[threadIdx.x] += scratch[threadIdx.x+4];
     scratch[threadIdx.x] += scratch[threadIdx.x+2];
