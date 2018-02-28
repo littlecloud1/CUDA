@@ -72,13 +72,6 @@ kernel5(dtype *g_idata, dtype *g_odata, unsigned int n)
     for(unsigned int offset=0; offset+i<n; offset+=threadnum){
         scratch[threadIdx.x] += g_idata[i + offset];
     }
-
-
-    if(i < n/2) {
-    scratch[threadIdx.x] =g_idata[i]+g_idata[i+n/2];
-    } else {
-    scratch[threadIdx.x] = 0;
-    }
     __syncthreads ();
     //change 79-81
     for(unsigned int s = blockDim.x/2; s >32; s = s >> 1) {
@@ -91,6 +84,7 @@ kernel5(dtype *g_idata, dtype *g_odata, unsigned int n)
     if (threadIdx.x < 32) {
     //volatile preventing compiler optimization
     volatile dtype *scratch_ = scratch;
+
     scratch_[threadIdx.x] += scratch_[threadIdx.x + 32];
 
 
