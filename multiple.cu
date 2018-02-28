@@ -67,6 +67,12 @@ kernel5(dtype *g_idata, dtype *g_odata, unsigned int n)
 
     unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
     unsigned int i = bid * blockDim.x + threadIdx.x;
+    unsigned int threadnum = gridDim.x * blockDim.x;
+
+    for(unsigned int offset=0; offset+i<n; offset+=threadnum){
+        scratch[threadIdx.x] += g_idata[i + offset];
+    }
+
 
     if(i < n/2) {
     scratch[threadIdx.x] =g_idata[i]+g_idata[i+n/2];
