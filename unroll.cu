@@ -84,12 +84,11 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 	
 	if (threadIdx.x < 32) {
        volatile dtype *scratch_ = scratch;
-        if (n > 64) {
-            scratch_[threadIdx.x] += scratch_[threadIdx.x + 32];
-        }
-        if (n > 32) {
-            scratch_[threadIdx.x] += scratch_[threadIdx.x + 16];
-        }
+        scratch_[threadIdx.x] += scratch_[threadIdx.x + 32];
+
+
+        scratch_[threadIdx.x] += scratch_[threadIdx.x + 16];
+
         scratch_[threadIdx.x] += scratch_[threadIdx.x+8];
         scratch_[threadIdx.x] += scratch_[threadIdx.x+4];
         scratch_[threadIdx.x] += scratch_[threadIdx.x+2];
