@@ -75,7 +75,7 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
     }
     __syncthreads ();
     //change 79-81
-    for(unsigned int s = blockDim.x/2; s >=32; s = s >> 1) {
+    for(unsigned int s = blockDim.x/2; s >32; s = s >> 1) {
     if(threadIdx.x <s) {
     scratch[threadIdx.x] += scratch[threadIdx.x+s];
     }
@@ -88,7 +88,7 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
     scratch[threadIdx.x] += scratchUnroll[threadIdx.x + 16];
     }
 
-	
+
 	scratch[threadIdx.x] += scratch[threadIdx.x+8];
 	scratch[threadIdx.x] += scratch[threadIdx.x+4];
 	scratch[threadIdx.x] += scratch[threadIdx.x+2];
