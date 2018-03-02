@@ -81,19 +81,24 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
     }
     __syncthreads ();
     }
-	
+    if (blockDim.x >= 512) {
+        if (threadIdx.x < 256) { scratch[threadIdx.x] += scratch[threadIdx.x + 256]; } __syncthreads(); }
+    if (blockDim.x >= 256) {
+        if (threadIdx.x < 128) { scratch[threadIdx.x] += scratch[threadIdx.x + 128]; } __syncthreads(); }
+    if (blockDim.x >= 128) {
+        if (threadIdx.x < 64) { scratch[threadIdx.x] += scratch[threadIdx.x + 64]; } __syncthreads(); }
 	if (threadIdx.x < 32) {
         //volatile preventing compiler optimization
         volatile dtype *scratch_ = scratch;
-        scratch_[threadIdx.x] += scratch_[threadIdx.x + 32];
+        if (blockSize >= 64)scratch_[threadIdx.x] += scratch_[threadIdx.x + 32];
 
 
-        scratch_[threadIdx.x] += scratch_[threadIdx.x + 16];
+        if (blockSize >= 32)scratch_[threadIdx.x] += scratch_[threadIdx.x + 16];
 
-        scratch_[threadIdx.x] += scratch_[threadIdx.x+8];
-        scratch_[threadIdx.x] += scratch_[threadIdx.x+4];
-        scratch_[threadIdx.x] += scratch_[threadIdx.x+2];
-        scratch_[threadIdx.x] += scratch_[threadIdx.x+1];
+        if (blockSize >= 16)scratch_[threadIdx.x] += scratch_[threadIdx.x+8];
+        if (blockSize >= 8)scratch_[threadIdx.x] += scratch_[threadIdx.x+4];
+        if (blockSize >= 4) scratch_[threadIdx.x] += scratch_[threadIdx.x+2];
+        if (blockSize >= 2) scratch_[threadIdx.x] += scratch_[threadIdx.x+1];
 
     }
 
