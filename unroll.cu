@@ -62,30 +62,31 @@ dtype reduce_cpu(dtype *data, int n) {
 __global__ void
 kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 {
-  __shared__  dtype scratch[MAX_THREADS];
+	__shared__  dtype scratch[MAX_THREADS];
 
     unsigned int bid = gridDim.x * blockIdx.y + blockIdx.x;
     unsigned int i = bid * blockDim.x + threadIdx.x;
 
     if(i < n/2) {
-    scratch[threadIdx.x] =g_idata[i]+g_idata[i+n/2];
+		scratch[threadIdx.x] =g_idata[i]+g_idata[i+n/2];
     } else {
-    scratch[threadIdx.x] = 0;
+		scratch[threadIdx.x] = 0;
     }
     __syncthreads ();
+	
     //change 79-81
     for(unsigned int s = blockDim.x/2; s >32; s = s >> 1) {
-    if(threadIdx.x <s) {
-    scratch[threadIdx.x] += scratch[threadIdx.x+s];
-    }
-    __syncthreads ();
+		if(threadIdx.x <s) {
+			scratch[threadIdx.x] += scratch[threadIdx.x+s];
+		}
+		__syncthreads ();
     }
 	
 	if (threadIdx.x < 32) {
         //volatile preventing compiler optimization
         volatile dtype *scratch_ = scratch;
-        scratch_[threadIdx.x] += scratch_[threadIdx.x + 32];
-		scratch_[threadIdx.x] += scratch_[threadIdx.x + 16];
+		if (n > 64)scratch_[threadIdx.x] += scratch_[threadIdx.x + 32];
+		if (n > 32)scratch_[threadIdx.x] += scratch_[threadIdx.x + 16];
         scratch_[threadIdx.x] += scratch_[threadIdx.x+8];
         scratch_[threadIdx.x] += scratch_[threadIdx.x+4];
         scratch_[threadIdx.x] += scratch_[threadIdx.x+2];
@@ -95,7 +96,7 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 
 
     if(threadIdx.x == 0) {
-    g_odata[bid] = scratch[0];
+		g_odata[bid] = scratch[0];
     }
 
 
