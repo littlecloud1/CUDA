@@ -87,23 +87,19 @@ kernel5(dtype *g_idata, dtype *g_odata, unsigned int n)
     }
     __syncthreads ();
     }
-
     if (threadIdx.x < 32) {
-    //volatile preventing compiler optimization
-    volatile dtype *scratch_ = scratch;
-    scratch_[threadIdx.x] += scratch_[threadIdx.x + 32];
-
-
-    scratch_[threadIdx.x] += scratch_[threadIdx.x + 16];
-
-    scratch_[threadIdx.x] += scratch_[threadIdx.x+8];
-    scratch_[threadIdx.x] += scratch_[threadIdx.x+4];
-    scratch_[threadIdx.x] += scratch_[threadIdx.x+2];
-    scratch_[threadIdx.x] += scratch_[threadIdx.x+1];
+    if (n > 64) {
+        scratch[threadIdx.x] += scratch[threadIdx.x + 32];
+    }
+    if (n > 32) {
+        scratch[threadIdx.x] += scratch[threadIdx.x + 16];
+    }
+    scratch[threadIdx.x] += scratch[threadIdx.x+8];
+    scratch[threadIdx.x] += scratch[threadIdx.x+4];
+    scratch[threadIdx.x] += scratch[threadIdx.x+2];
+    scratch[threadIdx.x] += scratch[threadIdx.x+1];
 
     }
-
-
 
     if(threadIdx.x == 0) {
     g_odata[bid] = scratch[0];
