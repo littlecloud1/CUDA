@@ -90,15 +90,15 @@ kernel4(dtype *g_idata, dtype *g_odata, unsigned int n)
 	if (threadIdx.x < 32) {
         //volatile preventing compiler optimization
         volatile dtype *scratch_ = scratch;
-        if (blockSize >= 64)scratch_[threadIdx.x] += scratch_[threadIdx.x + 32];
+        if (blockDim.x >= 64)scratch_[threadIdx.x] += scratch_[threadIdx.x + 32];
 
 
-        if (blockSize >= 32)scratch_[threadIdx.x] += scratch_[threadIdx.x + 16];
+        if (blockDim.x >= 32)scratch_[threadIdx.x] += scratch_[threadIdx.x + 16];
 
-        if (blockSize >= 16)scratch_[threadIdx.x] += scratch_[threadIdx.x+8];
-        if (blockSize >= 8)scratch_[threadIdx.x] += scratch_[threadIdx.x+4];
-        if (blockSize >= 4) scratch_[threadIdx.x] += scratch_[threadIdx.x+2];
-        if (blockSize >= 2) scratch_[threadIdx.x] += scratch_[threadIdx.x+1];
+        if (blockDim.x >= 16)scratch_[threadIdx.x] += scratch_[threadIdx.x+8];
+        if (blockDim.x >= 8)scratch_[threadIdx.x] += scratch_[threadIdx.x+4];
+        if (blockDim.x >= 4) scratch_[threadIdx.x] += scratch_[threadIdx.x+2];
+        if (blockDim.x >= 2) scratch_[threadIdx.x] += scratch_[threadIdx.x+1];
 
     }
 
