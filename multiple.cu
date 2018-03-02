@@ -12,7 +12,7 @@ typedef float dtype;
 
 #define MIN(x,y) ((x < y) ? x : y)
 
-
+//done
 /* return the next power of 2 number that is larger than x */
 unsigned int nextPow2( unsigned int x ) {
     --x;
